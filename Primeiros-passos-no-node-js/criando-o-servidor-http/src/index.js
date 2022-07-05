@@ -16,8 +16,6 @@ const server = http.createServer((request, response) => {
         pathname = `/${splitEndpoint[0]}/:id`;
         id = splitEndpoint[1];
     }
-    
-        console.log(pathname);
 
     const route = routes.find((routeObj) => (
         routeObj.endpoint === pathname && routeObj.method === request.method
@@ -26,6 +24,11 @@ const server = http.createServer((request, response) => {
     if (route) {
         request.query = parsedUrl.query;
         request.params = { id };
+
+        response.send = (statusCode, body) => {
+            response.writeHead(statusCode, { 'Content-Type': 'application/json' });
+            response.end(JSON.stringify(body));
+        }
 
         route.handler(request, response);
     } else {
